@@ -80,9 +80,6 @@ document.getElementById('book-form').addEventListener('submit', function(e){
 //validations
   if(title === '' || author === '' || isbn === ''){
     ui.showAlert("Please fill in all fields", "error")
-    title.disabled = true;
-    author.disabled = true;
-    isbn.disabled = true;
   }else{
     //add book to list
     ui.addBookToList(book);
