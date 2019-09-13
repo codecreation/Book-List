@@ -7,9 +7,6 @@ class Book {
 }
 
 class UI {
-  constructor() {
-
-  }
 
   addBookToList(book){
     const list = document.getElementById('book-list');
@@ -58,6 +55,49 @@ class UI {
   }
 }
 
+//local strg
+class Store {
+  static getBooks(){
+    let books;
+    if(localStorage.getItem('books') === null){
+       books = [];
+    }else{
+      books = JSON.parse(localStorage.getItem('books'));
+    }
+    return books;
+  }
+  static displayBooks() {
+    const books = Store.getBooks();
+
+    books.forEach(function(book) {
+      const ui = new UI();
+
+      ui.addBookToList(book);
+    });
+  }
+  static addBook(book){
+    const books = Store.getBooks();
+
+    books.push(book);
+
+    localStorage.setItem('books', JSON.stringify(books));
+  }
+  static removeBook(isbn){
+    const books = Store.getBooks();
+
+    books.forEach(function(book, index){
+      if(book.isbn === isbn){
+        books.splice(index, 1);
+      }
+    });
+    localStorage.setItem('books', JSON.stringify(books));
+
+  }
+}
+
+//DOM Load Event
+document.addEventListener('DOMContentLoaded', Store.displayBooks());
+
 //events
 
 document.getElementById('book-form').addEventListener('submit', function(e){
@@ -78,6 +118,9 @@ document.getElementById('book-form').addEventListener('submit', function(e){
     //add book to list
     ui.addBookToList(book);
 
+    //add to loc strg
+    Store.addBook(book);
+
     //show success
     ui.showAlert("Success! Book added!", "success");
 
@@ -97,6 +140,8 @@ document.getElementById('book-list').addEventListener('click', function(e) {
   const ui = new UI();
 
   ui.deleteBook(e.target);
+
+  Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
 
   //delete message
   ui.showAlert("Book deleted", "success");
